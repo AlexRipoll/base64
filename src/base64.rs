@@ -7,7 +7,7 @@ impl Base64 {
         Self {}
     }
 
-    pub fn encode(self, input: &str) -> String {
+    pub fn encode(&self, input: &str) -> String {
         let bytes = input.as_bytes();
 
         bytes
@@ -33,5 +33,22 @@ impl Base64 {
                 encoded_chunk
             })
             .collect::<String>()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::Base64;
+
+    #[test]
+    fn test_base64_encoder() {
+        let base64 = Base64::new();
+        assert_eq!(base64.encode(""), "");
+        assert_eq!(base64.encode("f"), "Zg==".to_string());
+        assert_eq!(base64.encode("fo"), "Zm8=".to_string());
+        assert_eq!(base64.encode("foo"), "Zm9v".to_string());
+        assert_eq!(base64.encode("foob"), "Zm9vYg==".to_string());
+        assert_eq!(base64.encode("fooba"), "Zm9vYmE=".to_string());
+        assert_eq!(base64.encode("foobar"), "Zm9vYmFy".to_string());
     }
 }
