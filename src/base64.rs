@@ -13,26 +13,25 @@ impl Base64 {
         bytes
             .chunks(3)
             .map(|chunk| {
+                // Create a 24-bit buffer
                 let mut buf: u32 = 0;
-
-                (0..3).for_each(|i| {
-                    let b = chunk.get(i as usize).unwrap_or(&0);
-                    buf = (buf << 8) | *b as u32;
-                });
-
-                let mut encoded_chunk = "".to_string();
-                for i in 0..4 {
-                    if i < chunk.len() + 1 {
-                        let idx = (buf >> 18 - i * 6) & 0b111111;
-                        let base64_char = BASE64_ALPHABET.chars().nth(idx as usize).unwrap();
-                        encoded_chunk.push(base64_char);
-                    } else {
-                        encoded_chunk.push('=');
-                    }
+                for (i, &byte) in chunk.iter().enumerate() {
+                    buf |= (byte as u32) << (16 - i * 8);
                 }
-                encoded_chunk
+
+                // Encode the 24-bit buffer into 4 Base64 characters
+                (0..4)
+                    .map(|i| {
+                        if i < chunk.len() + 1 {
+                            let idx = (buf >> 18 - i * 6) & 0b111111;
+                            BASE64_ALPHABET.chars().nth(idx as usize).unwrap()
+                        } else {
+                            '='
+                        }
+                    })
+                    .collect::<String>()
             })
-            .collect::<String>()
+            .collect()
     }
 }
 
