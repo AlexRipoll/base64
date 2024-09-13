@@ -75,6 +75,15 @@ pub enum Base64Error {
     InvalidCharacter,
 }
 
+impl std::fmt::Display for Base64Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match *self {
+            Base64Error::InvalidCharacter => write!(f, "Invalid character in input"),
+            Base64Error::Utf8Error(ref e) => e.fmt(f),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::Base64;
